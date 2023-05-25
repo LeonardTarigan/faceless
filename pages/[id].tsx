@@ -1,5 +1,5 @@
 import MainLayout from '@/layouts/MainLayout';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { db } from '../firebase/clientApp';
@@ -33,7 +33,8 @@ function MessageInput() {
 
         addDoc(targetCollection, {
             targetId: id,
-            message: inputRef.current?.value ?? '',
+            text: inputRef.current?.value ?? '',
+            timestamp: Timestamp.fromDate(new Date()),
         })
             .then(() => {
                 toast.success('Message Sent!');

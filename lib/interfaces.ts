@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { ReactNode } from 'react';
 
 export interface CustomableIcon {
@@ -14,4 +15,10 @@ export interface User {
     email: string | null;
     username: string | null;
     imageUrl: string;
+}
+
+export interface Message {
+    id: string;
+    text: string;
+    timestamp: string;
 }

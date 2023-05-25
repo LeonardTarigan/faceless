@@ -1,7 +1,8 @@
 import Messages from '@/components/Messages';
 import MainLayout from '@/layouts/MainLayout';
+import { getGreeting } from '@/lib/utilFunctions';
 import { RootState } from '@/redux/store';
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
@@ -12,7 +13,6 @@ function Dashboard() {
 
     const handleCopyClick = () => {
         if (linkRef.current) {
-            linkRef.current.select();
             navigator.clipboard
                 .writeText(linkRef.current.value)
                 .then(() => {
@@ -24,20 +24,6 @@ function Dashboard() {
         }
     };
 
-    function getGreeting(): string {
-        const currentHour = new Date().getHours();
-
-        if (currentHour >= 5 && currentHour < 12) {
-            return 'Good Morning';
-        } else if (currentHour >= 12 && currentHour < 18) {
-            return 'Good Afternoon';
-        } else if (currentHour >= 18 && currentHour < 22) {
-            return 'Good Evening';
-        } else {
-            return 'Good Night';
-        }
-    }
-
     return (
         <MainLayout title={username ?? 'User'}>
             <div className='flex flex-col gap-5'>
@@ -46,7 +32,10 @@ function Dashboard() {
                         <h1 className='text-xl font-semibold'>
                             {`${getGreeting()}, ${username}`}
                         </h1>
-                        <p>You have received 10 messages</p>
+                        <p>
+                            Paste the link below and let people send you
+                            messages
+                        </p>
                     </div>
 
                     <div className='flex gap-2'>
@@ -55,7 +44,7 @@ function Dashboard() {
                             type='text'
                             name='code'
                             id='code'
-                            value={`https://faceless.vercel.app/${uid}`}
+                            value={`https://faceless-message.vercel.app/${uid}`}
                             disabled
                             className='w-full rounded-md bg-slate-700 p-2'
                         />

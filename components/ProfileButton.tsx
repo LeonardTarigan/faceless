@@ -50,7 +50,7 @@ function ProfileButton() {
                     {({ open }) => (
                         <>
                             <Menu.Button>
-                                <div className='relative h-10 w-10 overflow-hidden rounded-full bg-slate-700'>
+                                <div className='relative h-10 w-10 overflow-hidden rounded-full bg-slate-700 outline-[1.5px] outline-offset-2 transition-all duration-75 hover:outline'>
                                     <Image
                                         alt='Profile Picture'
                                         fill={true}
@@ -77,7 +77,7 @@ function ProfileButton() {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link
-                                                href={`dashboard/${uid}`}
+                                                href={'/dashboard'}
                                                 className={`${
                                                     active && 'bg-indigo-700'
                                                 } group flex items-center gap-2 p-3`}
