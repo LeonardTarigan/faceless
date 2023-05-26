@@ -3,5 +3,10 @@
 @tailwind utilities;
 
 body {
-    @apply bg-slate-900 text-slate-100 mx-auto w-full px-5 pb-5 sm:w-4/5 md:w-2/3 lg:w-1/2 max-w-screen-lg;
+    @apply bg-slate-900 px-5 text-slate-100;
+}
+
+main,
+nav {
+    @apply mx-auto w-full max-w-screen-md pb-5 sm:w-4/5 md:w-2/3 lg:w-1/2;
 }

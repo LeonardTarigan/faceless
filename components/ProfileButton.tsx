@@ -15,7 +15,7 @@ function ProfileButton() {
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const { uid, username, imageUrl } = useSelector(
+    const { username, imageUrl } = useSelector(
         (state: RootState) => state.user
     );
 
@@ -23,6 +23,8 @@ function ProfileButton() {
 
     const handleLogout = () => {
         Cookies.remove('user');
+
+        router.push('/');
 
         dispatch(
             setUser({
@@ -34,9 +36,7 @@ function ProfileButton() {
             })
         );
 
-        router.push('/');
-
-        toast.success('Logged-out Successfully!');
+        toast.success('Logged-out successfully!');
     };
 
     useEffect(() => {

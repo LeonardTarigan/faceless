@@ -14,11 +14,12 @@ import {
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import DeleteIcon from './icons/DeleteIcon';
 import UFOSvg from './UFOSvg';
+import DeleteIcon from './icons/DeleteIcon';
+import MessageSkeleton from './MessageSkeleton';
 
 function Messages() {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<Message[] | null>(null);
     const [fetchStatus, setFetchStatus] = useState(true);
 
     const { uid } = useSelector((state: RootState) => state.user);
@@ -58,16 +59,18 @@ function Messages() {
 
     return (
         <section className='rounded-xl bg-slate-800 p-5'>
-            <h2 className='text-center text-xl font-semibold'>
-                My Messages ({messages.length})
+            <h2 className='mb-5 text-center text-xl font-semibold'>
+                Inbox ({messages?.length ?? '...'})
             </h2>
 
-            {messages.length === 0 && (
-                <UFOSvg className='mx-auto mt-10 h-44 w-44' />
-            )}
+            {messages === null && <MessageSkeleton />}
 
-            <div className='mt-5 flex flex-col gap-2'>
-                {messages.map((msg) => {
+            <div className='flex flex-col gap-2'>
+                {messages?.length === 0 && (
+                    <UFOSvg className='mx-auto mt-5 h-44 w-44' />
+                )}
+
+                {messages?.map((msg) => {
                     return (
                         <div
                             key={msg.id}

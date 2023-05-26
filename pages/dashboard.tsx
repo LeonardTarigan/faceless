@@ -2,7 +2,7 @@ import Messages from '@/components/Messages';
 import MainLayout from '@/layouts/MainLayout';
 import { getGreeting } from '@/lib/utilFunctions';
 import { RootState } from '@/redux/store';
-import { Suspense, useRef } from 'react';
+import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
@@ -32,10 +32,7 @@ function Dashboard() {
                         <h1 className='text-xl font-semibold'>
                             {`${getGreeting()}, ${username}`}
                         </h1>
-                        <p>
-                            Paste the link below and let people send you
-                            messages
-                        </p>
+                        <p>Share the link below and wait for messages</p>
                     </div>
 
                     <div className='flex gap-2'>

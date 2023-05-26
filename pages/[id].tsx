@@ -1,31 +1,41 @@
 import MainLayout from '@/layouts/MainLayout';
+import { FirebaseError } from 'firebase/app';
 import { Timestamp, addDoc, collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { db } from '../firebase/clientApp';
 import { toast } from 'react-hot-toast';
+import { db } from '../firebase/clientApp';
+import UFOSvg from '@/components/UFOSvg';
 
 function MessageInput() {
     const router = useRouter();
     const { id } = router.query;
 
     const [targetUser, setTargetUser] = useState<string | null>(null);
+    const [targetFound, setTargetFound] = useState(true);
 
     const userCollection = collection(db, 'users');
     const targetCollection = collection(db, `message-${id}`);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
-    const getUsername = async () => {
-        getDocs(userCollection).then((res) => {
-            const userArray = res.docs.map((item) => {
-                return item.data();
-            });
+    const getUsername = () => {
+        getDocs(userCollection)
+            .then((res) => {
+                const userArray = res.docs.map((item) => {
+                    return item.data();
+                });
 
-            const index = userArray.findIndex((user) => user.uid === id);
+                const index = userArray.findIndex((user) => user.uid === id);
 
-            setTargetUser(userArray[index]?.username);
-        });
+                if (index < 0) {
+                    setTargetFound(false);
+                } else {
+                    setTargetFound(true);
+                    setTargetUser(userArray[index]?.username);
+                }
+            })
+            .catch((error: FirebaseError) => toast.error(error.message));
     };
 
     const handleSubmit = (e: FormEvent) => {
@@ -36,12 +46,8 @@ function MessageInput() {
             text: inputRef.current?.value ?? '',
             timestamp: Timestamp.fromDate(new Date()),
         })
-            .then(() => {
-                toast.success('Message Sent!');
-            })
-            .catch((error) => {
-                alert(error);
-            });
+            .then(() => toast.success('Message sent!'))
+            .catch((error: FirebaseError) => toast.error(error.message));
     };
 
     useEffect(() => {
@@ -53,24 +59,40 @@ function MessageInput() {
         <MainLayout title='Write Message'>
             <form
                 onSubmit={handleSubmit}
-                className='flex w-full flex-col gap-5 rounded-xl bg-slate-800 p-5'
+                className={`${
+                    targetFound ? '' : 'hidden'
+                } flex w-full flex-col gap-5 rounded-xl bg-slate-800 p-5`}
             >
-                <h3
-                    className={`${
-                        targetUser ? '' : 'invisible'
-                    } text-center text-xl font-semibold`}
-                >
-                    Write message to {targetUser}
-                </h3>
+                {targetUser ? (
+                    <h3 className={`text-center text-xl font-semibold`}>
+                        Write a message to {targetUser}
+                    </h3>
+                ) : (
+                    <div className='flex justify-center'>
+                        <div className='h-7 w-72 animate-pulse rounded-full bg-slate-700'></div>
+                    </div>
+                )}
 
                 <textarea
                     ref={inputRef}
-                    className='rounded bg-slate-700 p-2 focus:outline'
+                    required
+                    placeholder='Write your message here'
+                    className='rounded-md bg-slate-700 p-2 outline-[1.5px] outline-offset-2 invalid:outline-rose-500 focus:outline'
                 />
                 <button className='rounded-md border-[1.5px] border-indigo-700 bg-indigo-700 py-2 font-semibold transition-all duration-150 hover:bg-transparent hover:text-indigo-700 active:translate-y-1'>
                     Send
                 </button>
             </form>
+
+            <div
+                className={`${
+                    targetFound ? 'hidden' : ''
+                } flex w-full flex-col items-center gap-10 rounded-xl bg-slate-800 p-5 text-center text-xl font-semibold`}
+            >
+                <h3>User Not Found!</h3>
+
+                <UFOSvg className='h-44 w-44' />
+            </div>
         </MainLayout>
     );
 }

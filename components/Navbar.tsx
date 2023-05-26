@@ -4,7 +4,7 @@ import LogoIcon from './icons/LogoIcon';
 
 function Navbar() {
     return (
-        <nav className='mt-2 flex justify-between rounded-xl bg-slate-800 p-5'>
+        <nav className='z-50 mt-2 flex justify-between rounded-xl bg-slate-800 p-5'>
             <Link
                 href={'/'}
                 className='flex items-center gap-2 text-xl font-bold'

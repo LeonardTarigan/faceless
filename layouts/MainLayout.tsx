@@ -42,8 +42,12 @@ function MainLayout(props: MainLayout) {
             </Head>
 
             <Toaster position='bottom-right' reverseOrder={false} />
+            {/* 
+            <div className='absolute flex h-screen items-center justify-center bg-slate-700'>
+                Loading
+            </div> */}
 
-            <div className={`${mainFont.className} flex flex-col gap-5 `}>
+            <div className={`${mainFont.className} flex w-1/2 flex-col gap-5`}>
                 <Navbar />
                 <main>{props.children}</main>
             </div>
