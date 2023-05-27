@@ -8,36 +8,56 @@ import {
     deleteDoc,
     doc,
     getDocs,
+    limit,
     orderBy,
     query,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import LoadingSpinner from './LoadingSpinner';
+import MessageSkeleton from './MessageSkeleton';
 import UFOSvg from './UFOSvg';
 import DeleteIcon from './icons/DeleteIcon';
-import MessageSkeleton from './MessageSkeleton';
 
 function Messages() {
     const [messages, setMessages] = useState<Message[] | null>(null);
     const [fetchStatus, setFetchStatus] = useState(true);
+    const [maxItem, setMaxItem] = useState(5);
 
     const { uid } = useSelector((state: RootState) => state.user);
 
     const messageCollection = collection(db, `message-${uid}`);
 
     const handleDelete = (id: string) => {
-        deleteDoc(doc(db, `message-${uid}`, id))
-            .then(() => {
-                toast.success('Message Deleted!');
-                setFetchStatus(true);
-            })
-            .catch((error: FirebaseError) => toast.error(error.message));
+        toast.promise(
+            deleteDoc(doc(db, `message-${uid}`, id))
+                .then(() => {
+                    setFetchStatus(true);
+                })
+                .catch((error: FirebaseError) => toast.error(error.message)),
+            {
+                loading: 'Deleting...',
+                success: 'Message deleted!',
+                error: 'Could not delete!',
+            }
+        );
+    };
+
+    const fetchMore = () => {
+        setMaxItem(maxItem + 5);
+        setFetchStatus(true);
     };
 
     useEffect(() => {
         if (fetchStatus) {
-            getDocs(query(messageCollection, orderBy('timestamp', 'desc')))
+            getDocs(
+                query(
+                    messageCollection,
+                    orderBy('timestamp', 'desc'),
+                    limit(maxItem)
+                )
+            )
                 .then((res) => {
                     const messageArray = res.docs.map((item) => {
                         const { text, timestamp, id } = item.data();
@@ -58,16 +78,17 @@ function Messages() {
     }, [uid, fetchStatus]);
 
     return (
-        <section className='rounded-xl bg-slate-800 p-5'>
-            <h2 className='mb-5 text-center text-xl font-semibold'>
-                Inbox ({messages?.length ?? '...'})
-            </h2>
+        <section className='flex flex-col items-center gap-5 rounded-xl bg-slate-800 p-5'>
+            <h2 className='text-center text-xl font-semibold'>INBOX</h2>
 
             {messages === null && <MessageSkeleton />}
 
-            <div className='flex flex-col gap-2'>
+            <div className='flex w-full flex-col gap-2'>
                 {messages?.length === 0 && (
-                    <UFOSvg className='mx-auto mt-5 h-44 w-44' />
+                    <div className='flex flex-col items-center gap-2 font-medium italic text-slate-400'>
+                        <UFOSvg className='mx-auto mt-2 h-44 w-44' />
+                        <span>Your inbox is empty :(</span>
+                    </div>
                 )}
 
                 {messages?.map((msg) => {
@@ -93,6 +114,19 @@ function Messages() {
                     );
                 })}
             </div>
+
+            <button
+                onClick={fetchMore}
+                className={`${
+                    messages && messages.length > 0 ? '' : 'hidden'
+                } flex h-10 w-32 items-center justify-center rounded-md bg-indigo-700`}
+            >
+                {fetchStatus ? (
+                    <LoadingSpinner className='h-5 w-5 animate-spin text-white' />
+                ) : (
+                    <span>See More</span>
+                )}
+            </button>
         </section>
     );
 }

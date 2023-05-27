@@ -1,3 +1,4 @@
+import UFOSvg from '@/components/UFOSvg';
 import MainLayout from '@/layouts/MainLayout';
 import { FirebaseError } from 'firebase/app';
 import { Timestamp, addDoc, collection, getDocs } from 'firebase/firestore';
@@ -5,7 +6,6 @@ import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { db } from '../firebase/clientApp';
-import UFOSvg from '@/components/UFOSvg';
 
 function MessageInput() {
     const router = useRouter();
@@ -41,13 +41,18 @@ function MessageInput() {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        addDoc(targetCollection, {
-            targetId: id,
-            text: inputRef.current?.value ?? '',
-            timestamp: Timestamp.fromDate(new Date()),
-        })
-            .then(() => toast.success('Message sent!'))
-            .catch((error: FirebaseError) => toast.error(error.message));
+        toast.promise(
+            addDoc(targetCollection, {
+                targetId: id,
+                text: inputRef.current?.value ?? '',
+                timestamp: Timestamp.fromDate(new Date()),
+            }).catch((error: FirebaseError) => toast.error(error.message)),
+            {
+                loading: 'Sending...',
+                success: 'Message sent!',
+                error: 'Message not sent!',
+            }
+        );
     };
 
     useEffect(() => {

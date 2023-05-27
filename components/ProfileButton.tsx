@@ -13,6 +13,7 @@ import UserIcon from './icons/UserIcon';
 
 function ProfileButton() {
     const dispatch = useDispatch();
+
     const router = useRouter();
 
     const { username, imageUrl } = useSelector(

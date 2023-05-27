@@ -38,14 +38,18 @@ function MainLayout(props: MainLayout) {
     return (
         <>
             <Head>
+                <meta
+                    name='description'
+                    content='Anonymous Messaging App'
+                ></meta>
+                <meta
+                    name='keywords'
+                    content='message, messaging, anonymous, messaging app, anonymous message'
+                ></meta>
                 <title>{`FACELESS | ${props.title}`}</title>
             </Head>
 
             <Toaster position='bottom-right' reverseOrder={false} />
-            {/* 
-            <div className='absolute flex h-screen items-center justify-center bg-slate-700'>
-                Loading
-            </div> */}
 
             <div className={`${mainFont.className} flex w-1/2 flex-col gap-5`}>
                 <Navbar />

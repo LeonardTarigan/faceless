@@ -3,14 +3,13 @@ import { FirebaseError } from 'firebase/app';
 import { signInWithPopup } from 'firebase/auth';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import Cookies from 'js-cookie';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { auth, db, provider } from '../firebase/clientApp';
 import GoogleIcon from './icons/GoogleIcon';
-import Link from 'next/link';
-import Image from 'next/image';
 import LogoIcon from './icons/LogoIcon';
 
 function LoginForm() {
@@ -20,43 +19,49 @@ function LoginForm() {
 
     const userCollection = collection(db, 'users');
 
-    const { username, uid } = useSelector((state: RootState) => state.user);
+    const { username } = useSelector((state: RootState) => state.user);
 
     const signInWithGoogle = () => {
-        signInWithPopup(auth, provider)
-            .then((res) => {
-                let { uid, displayName } = res.user;
+        toast.promise(
+            signInWithPopup(auth, provider)
+                .then((res) => {
+                    let { uid, displayName } = res.user;
 
-                Cookies.set('user', JSON.stringify(res.user), {
-                    expires: 30,
-                });
-
-                const userRef = doc(userCollection, uid);
-
-                getDoc(userRef)
-                    .then((docSnapshot) => {
-                        if (!docSnapshot.exists()) {
-                            setDoc(
-                                userRef,
-                                {
-                                    username: displayName,
-                                    uid: uid,
-                                },
-                                { merge: true }
-                            ).catch((error) => {
-                                console.log(error);
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-                    .finally(() => {
-                        router.push('/dashboard');
-                        toast.success('Logged-in successfully!');
+                    Cookies.set('user', JSON.stringify(res.user), {
+                        expires: 30,
                     });
-            })
-            .catch((error: FirebaseError) => toast.error(error.message));
+
+                    const userRef = doc(userCollection, uid);
+
+                    getDoc(userRef)
+                        .then((docSnapshot) => {
+                            if (!docSnapshot.exists()) {
+                                setDoc(
+                                    userRef,
+                                    {
+                                        username: displayName,
+                                        uid: uid,
+                                    },
+                                    { merge: true }
+                                ).catch((error) => {
+                                    console.log(error);
+                                });
+                            }
+                        })
+                        .catch((error: FirebaseError) => {
+                            toast.error(error.message);
+                        })
+                        .finally(() => {
+                            router.push('/dashboard');
+                        });
+                })
+                .catch((error: FirebaseError) => toast.error(error.message)),
+            {
+                loading: 'Logging-in...',
+                success: 'Logged-in succesfully!',
+                error: 'Login failed!',
+            }
+        );
     };
 
     useEffect(() => {

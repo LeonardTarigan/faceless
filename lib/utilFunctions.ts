@@ -6,11 +6,13 @@ export const getFormattedDate = (timestamp: number) => {
     const month = date.toLocaleString('default', { month: 'short' });
     const year = date.getFullYear();
 
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+    const time = date.toLocaleTimeString('us-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    });
 
-    return `${day} ${month} ${year} | ${hours}:${minutes}:${seconds}`;
+    return `${day} ${month} ${year} | ${time}`;
 };
 
 export const getGreeting = () => {

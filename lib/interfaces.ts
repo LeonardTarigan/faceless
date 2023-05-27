@@ -1,4 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
 import { ReactNode } from 'react';
 
 export interface CustomableIcon {
