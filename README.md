@@ -1,38 +1,88 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Faceless
+
+Faceless is an anonymous messaging app built using Next.js, Tailwind CSS, and Firebase. It allows users to communicate with each other without revealing their identities, promoting free expression and open conversations.
+
+## Features
+
+-   **Personal Link Sharing**: Registered users can share their personal link to receive messages.
+-   **Anonymous Message Sending**: Public users can send messages anonymously to registered users.
+-   **Received Message Viewing**: Registered users can view the messages they have received.
+-   **Message Deletion**: Registered users can delete messages they have received.
+
+## Technologies Used
+
+-   Next.js for the Javascript framework
+-   Tailwind CSS for the CSS framework
+-   Redux for state management
+-   Firebase for authentication and database
+
+## Prerequisites
+
+Before running the Faceless app locally, ensure that you have the following installed on your machine:
+
+-   Node.js: [https://nodejs.org](https://nodejs.org)
+-   Yarn: [https://yarnpkg.com](https://yarnpkg.com)
 
 ## Getting Started
 
-First, run the development server:
+Follow these instructions to get a local copy of the Faceless app up and running on your machine.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+1. Clone the repository:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    ```
+    git clone https://github.com/LeonardTarigan/faceless.git
+    ```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+2. Navigate to the project directory:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+    ```
+    cd faceless
+    ```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+3. Install the dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+    ```
+    yarn install
+    ```
 
-## Learn More
+4. Set up Firebase:
 
-To learn more about Next.js, take a look at the following resources:
+    - Create a new Firebase project on the [Firebase Console](https://console.firebase.google.com/).
+    - Enable the **Authentication** and **Firestore** services in your project.
+    - Go to **Project Settings** > **General** and copy the Firebase configuration object.
+    - Create a new file named `.env` in the project root directory.
+    - Paste the Firebase configuration into the `.env` file using the following format:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+        ```env
+        NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_API_KEY
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
+        NEXT_PUBLIC_FIREBASE_APP_ID=YOUR_APP_ID
+        NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=YOUR_MEASUREMENT_ID
+        ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+5. Start the development server:
+    ```
+    yarn dev
+    ```
+6. Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the app.
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To deploy the Faceless app to a hosting platform, follow the deployment instructions specific to your chosen provider. Here are some general steps to get you started:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Build the project:
+2. Deploy the project to your preferred hosting platform using the build output.
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to the Faceless app, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix: `git checkout -b my-new-feature`.
+3. Make your changes and test them thoroughly.
+4. Commit your changes: `git commit -m 'Add some feature'`.
+5. Push the branch to your forked repository: `git push origin my-new-feature`.
+6. Open a pull request against the `main` branch of the original repository.
+
+Please ensure that your code adheres to the existing coding style and conventions.
