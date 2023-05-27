@@ -24,6 +24,7 @@ function Messages() {
     const [messages, setMessages] = useState<Message[] | null>(null);
     const [fetchStatus, setFetchStatus] = useState(true);
     const [maxItem, setMaxItem] = useState(5);
+    const [hasReachedMax, setHasReachedMax] = useState(false);
 
     const { uid } = useSelector((state: RootState) => state.user);
 
@@ -50,7 +51,7 @@ function Messages() {
     };
 
     useEffect(() => {
-        if (fetchStatus) {
+        if (fetchStatus && !hasReachedMax) {
             getDocs(
                 query(
                     messageCollection,
@@ -60,19 +61,27 @@ function Messages() {
             )
                 .then((res) => {
                     const messageArray = res.docs.map((item) => {
-                        const { text, timestamp, id } = item.data();
+                        const { text, timestamp } = item.data();
 
                         const date = getFormattedDate(timestamp.seconds);
 
                         return { id: item.id, text: text, timestamp: date };
                     });
 
-                    setMessages(messageArray);
-                    setFetchStatus(false);
+                    if (messages?.length === messageArray.length) {
+                        setHasReachedMax(true);
+                    } else {
+                        setMessages(messageArray);
+                    }
                 })
                 .catch((error: FirebaseError) => {
                     toast.error(error.message);
+                })
+                .finally(() => {
+                    setFetchStatus(false);
                 });
+        } else {
+            setFetchStatus(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uid, fetchStatus]);
