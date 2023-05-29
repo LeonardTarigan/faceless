@@ -46,12 +46,14 @@ function Messages() {
     };
 
     const fetchMore = () => {
-        setMaxItem(maxItem + 5);
-        setFetchStatus(true);
+        if (!hasReachedMax) {
+            setMaxItem(maxItem + 5);
+            setFetchStatus(true);
+        }
     };
 
     useEffect(() => {
-        if (fetchStatus && !hasReachedMax) {
+        if (fetchStatus) {
             getDocs(
                 query(
                     messageCollection,
@@ -70,9 +72,9 @@ function Messages() {
 
                     if (messages?.length === messageArray.length) {
                         setHasReachedMax(true);
-                    } else {
-                        setMessages(messageArray);
                     }
+
+                    setMessages(messageArray);
                 })
                 .catch((error: FirebaseError) => {
                     toast.error(error.message);
@@ -127,7 +129,9 @@ function Messages() {
             <button
                 onClick={fetchMore}
                 className={`${
-                    messages && messages.length > 0 ? '' : 'hidden'
+                    messages && messages.length > 0 && !hasReachedMax
+                        ? ''
+                        : 'hidden'
                 } flex h-10 w-32 items-center justify-center rounded-md bg-indigo-700`}
             >
                 {fetchStatus ? (
