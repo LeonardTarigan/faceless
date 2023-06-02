@@ -32,7 +32,7 @@ function Dashboard() {
                         <h1 className='text-xl font-semibold'>
                             {`${getGreeting()}, ${username}`}
                         </h1>
-                        <p>Share the link below and wait for messages</p>
+                        <p>Share the link below to receive messages</p>
                     </div>
 
                     <div className='flex gap-2'>
