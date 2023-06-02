@@ -21,3 +21,10 @@ export interface Message {
     text: string;
     timestamp: string;
 }
+
+export interface ConfirmationDialog {
+    isOpen: boolean;
+    currentId: string;
+    setOpenDialog: Function;
+    setFetchStatus: Function;
+}

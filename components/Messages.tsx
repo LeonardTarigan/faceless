@@ -3,18 +3,11 @@ import { Message } from '@/lib/interfaces';
 import { getFormattedDate } from '@/lib/utilFunctions';
 import { RootState } from '@/redux/store';
 import { FirebaseError } from 'firebase/app';
-import {
-    collection,
-    deleteDoc,
-    doc,
-    getDocs,
-    limit,
-    orderBy,
-    query,
-} from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import DeleteConfirmation from './DeleteConfirmation';
 import LoadingSpinner from './LoadingSpinner';
 import MessageSkeleton from './MessageSkeleton';
 import UFOSvg from './UFOSvg';
@@ -25,31 +18,23 @@ function Messages() {
     const [fetchStatus, setFetchStatus] = useState(true);
     const [maxItem, setMaxItem] = useState(5);
     const [hasReachedMax, setHasReachedMax] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [currentId, setCurrentId] = useState('');
 
     const { uid } = useSelector((state: RootState) => state.user);
 
     const messageCollection = collection(db, `message-${uid}`);
-
-    const handleDelete = (id: string) => {
-        toast.promise(
-            deleteDoc(doc(db, `message-${uid}`, id))
-                .then(() => {
-                    setFetchStatus(true);
-                })
-                .catch((error: FirebaseError) => toast.error(error.message)),
-            {
-                loading: 'Deleting...',
-                success: 'Message deleted!',
-                error: 'Could not delete!',
-            }
-        );
-    };
 
     const fetchMore = () => {
         if (!hasReachedMax) {
             setMaxItem(maxItem + 5);
             setFetchStatus(true);
         }
+    };
+
+    const handleOpenModal = (id: string) => {
+        setOpenDialog(true);
+        setCurrentId(id);
     };
 
     useEffect(() => {
@@ -70,7 +55,10 @@ function Messages() {
                         return { id: item.id, text: text, timestamp: date };
                     });
 
-                    if (messages?.length === messageArray.length) {
+                    if (
+                        JSON.stringify(messages) ===
+                        JSON.stringify(messageArray)
+                    ) {
                         setHasReachedMax(true);
                     }
 
@@ -94,6 +82,13 @@ function Messages() {
 
             {messages === null && <MessageSkeleton />}
 
+            <DeleteConfirmation
+                isOpen={openDialog}
+                currentId={currentId}
+                setOpenDialog={setOpenDialog}
+                setFetchStatus={setFetchStatus}
+            />
+
             <div className='flex w-full flex-col gap-2'>
                 {messages?.length === 0 && (
                     <div className='flex flex-col items-center gap-2 font-medium italic text-slate-400'>
@@ -113,7 +108,7 @@ function Messages() {
                                     {msg.timestamp}
                                 </span>
                                 <button
-                                    onClick={() => handleDelete(msg.id)}
+                                    onClick={() => handleOpenModal(msg.id)}
                                     className='group rounded border-[1.5px] border-rose-500 bg-rose-500 p-1 transition-all duration-150 hover:bg-transparent active:translate-y-1'
                                 >
                                     <DeleteIcon className='h-5 w-5 group-hover:text-rose-500' />
@@ -129,10 +124,10 @@ function Messages() {
             <button
                 onClick={fetchMore}
                 className={`${
-                    messages && messages.length > 0 && !hasReachedMax
+                    messages !== null && messages?.length > 0 && !hasReachedMax
                         ? ''
                         : 'hidden'
-                } flex h-10 w-32 items-center justify-center rounded-md bg-indigo-700`}
+                } flex h-10 w-32 items-center justify-center rounded-md bg-indigo-700 active:translate-y-1`}
             >
                 {fetchStatus ? (
                     <LoadingSpinner className='h-5 w-5 animate-spin text-white' />
