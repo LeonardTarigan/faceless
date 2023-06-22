@@ -124,7 +124,7 @@ function Messages() {
             <button
                 onClick={fetchMore}
                 className={`${
-                    messages !== null && messages?.length > 0 && !hasReachedMax
+                    messages !== null && messages?.length >= 5 && !hasReachedMax
                         ? ''
                         : 'hidden'
                 } flex h-10 w-32 items-center justify-center rounded-md bg-indigo-700 active:translate-y-1`}
