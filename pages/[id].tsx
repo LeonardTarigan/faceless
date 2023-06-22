@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { db } from '../firebase/clientApp';
+import PublicFormSkeleton from '@/components/PublicFormSkeleton';
 
 function MessageInput() {
     const router = useRouter();
@@ -69,24 +70,23 @@ function MessageInput() {
                 } flex w-full flex-col gap-5 rounded-xl bg-slate-800 p-5`}
             >
                 {targetUser ? (
-                    <h3 className={`text-center text-xl font-semibold`}>
-                        Write a message to {targetUser}
-                    </h3>
+                    <>
+                        <h3 className={`text-center text-xl font-semibold`}>
+                            Write a message to {targetUser}
+                        </h3>
+                        <textarea
+                            ref={inputRef}
+                            required
+                            placeholder='Write your message here'
+                            className='h-20 rounded-md bg-slate-700 p-2 outline-[1.5px] outline-offset-2 invalid:outline-rose-500 focus:outline'
+                        />
+                        <button className='h-11 rounded-md border-[1.5px] border-indigo-700 bg-indigo-700 font-semibold transition-all duration-150 hover:bg-transparent hover:text-indigo-700 active:translate-y-1'>
+                            Send
+                        </button>
+                    </>
                 ) : (
-                    <div className='flex justify-center'>
-                        <div className='h-7 w-72 animate-pulse rounded-full bg-slate-700'></div>
-                    </div>
+                    <PublicFormSkeleton />
                 )}
-
-                <textarea
-                    ref={inputRef}
-                    required
-                    placeholder='Write your message here'
-                    className='rounded-md bg-slate-700 p-2 outline-[1.5px] outline-offset-2 invalid:outline-rose-500 focus:outline'
-                />
-                <button className='rounded-md border-[1.5px] border-indigo-700 bg-indigo-700 py-2 font-semibold transition-all duration-150 hover:bg-transparent hover:text-indigo-700 active:translate-y-1'>
-                    Send
-                </button>
             </form>
 
             <div

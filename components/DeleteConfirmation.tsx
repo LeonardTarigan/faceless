@@ -26,7 +26,6 @@ function DeleteConfirmation({
         toast.promise(
             deleteDoc(doc(db, `users/${uid}/messages`, id))
                 .then(() => {
-                    setFetchStatus(true);
                     setOpenDialog(false);
                 })
                 .catch((error: FirebaseError) => toast.error(error.message)),

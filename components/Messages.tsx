@@ -3,7 +3,13 @@ import { Message } from '@/lib/interfaces';
 import { getFormattedDate } from '@/lib/utilFunctions';
 import { RootState } from '@/redux/store';
 import { FirebaseError } from 'firebase/app';
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import {
+    collection,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
@@ -38,43 +44,37 @@ function Messages() {
     };
 
     useEffect(() => {
-        if (fetchStatus) {
-            getDocs(
-                query(
-                    messageCollection,
-                    orderBy('timestamp', 'desc'),
-                    limit(maxItem)
-                )
-            )
-                .then((res) => {
-                    const messageArray = res.docs.map((item) => {
-                        const { text, timestamp } = item.data();
-
-                        const date = getFormattedDate(timestamp.seconds);
-
-                        return { id: item.id, text: text, timestamp: date };
-                    });
-
-                    if (
-                        JSON.stringify(messages) ===
-                        JSON.stringify(messageArray)
-                    ) {
-                        setHasReachedMax(true);
-                    }
-
-                    setMessages(messageArray);
-                })
-                .catch((error: FirebaseError) => {
-                    toast.error(error.message);
-                })
-                .finally(() => {
-                    setFetchStatus(false);
+        const unsubscribe = onSnapshot(
+            query(
+                messageCollection,
+                orderBy('timestamp', 'desc'),
+                limit(maxItem)
+            ),
+            (snapshot) => {
+                const messageArray = snapshot.docs.map((item) => {
+                    const { text, timestamp } = item.data();
+                    const date = getFormattedDate(timestamp.seconds);
+                    return { id: item.id, text: text, timestamp: date };
                 });
-        } else {
-            setFetchStatus(false);
-        }
+
+                if (JSON.stringify(messages) === JSON.stringify(messageArray)) {
+                    setHasReachedMax(true);
+                }
+
+                setMessages(messageArray);
+                setFetchStatus(false);
+            },
+            (error: FirebaseError) => {
+                toast.error(error.message);
+                setFetchStatus(false);
+            }
+        );
+
+        return () => {
+            unsubscribe();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [uid, fetchStatus]);
+    }, [uid, maxItem]);
 
     return (
         <section className='flex flex-col items-center gap-5 rounded-xl bg-slate-800 p-5'>

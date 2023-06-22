@@ -23,9 +23,8 @@ function ProfileButton() {
     const [display, setDisplay] = useState(false);
 
     const handleLogout = () => {
-        Cookies.remove('user');
-
         router.push('/');
+        Cookies.remove('user');
 
         dispatch(
             setUser({
