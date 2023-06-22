@@ -24,7 +24,7 @@ function DeleteConfirmation({
 
     const handleDelete = (id: string) => {
         toast.promise(
-            deleteDoc(doc(db, `message-${uid}`, id))
+            deleteDoc(doc(db, `users/${uid}/messages`, id))
                 .then(() => {
                     setFetchStatus(true);
                     setOpenDialog(false);

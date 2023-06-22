@@ -15,7 +15,7 @@ function MessageInput() {
     const [targetFound, setTargetFound] = useState(true);
 
     const userCollection = collection(db, 'users');
-    const targetCollection = collection(db, `message-${id}`);
+    const targetCollection = collection(db, `users/${id}/messages`);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
 

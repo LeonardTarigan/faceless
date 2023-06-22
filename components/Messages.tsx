@@ -23,7 +23,7 @@ function Messages() {
 
     const { uid } = useSelector((state: RootState) => state.user);
 
-    const messageCollection = collection(db, `message-${uid}`);
+    const messageCollection = collection(db, `users/${uid}/messages`);
 
     const fetchMore = () => {
         if (!hasReachedMax) {
